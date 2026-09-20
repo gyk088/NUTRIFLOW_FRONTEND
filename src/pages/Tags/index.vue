@@ -61,7 +61,7 @@ const columns = [
 async function load() {
   loading.value = true
   try {
-    const { data } = await apiClient.get('/api/v1/tags', { params: { type: typeFilter.value } })
+    const { data } = await apiClient.get('/api/v1/app/tags', { params: { type: typeFilter.value } })
     tags.value = data
   } catch (e) {
     notifyServerError(e?.response?.data?.message || e?.response?.data?.error)
@@ -72,7 +72,7 @@ async function load() {
 
 async function remove(id) {
   try {
-    await apiClient.delete(`/api/v1/tags/${id}`)
+    await apiClient.delete(`/api/v1/admin/tags/${id}`)
     notifyServerSuccess('Удалено', 'Тег удалён')
     await load()
   } catch (e) {

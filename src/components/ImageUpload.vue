@@ -42,7 +42,7 @@ async function handleUpload({ file, onSuccess, onError }) {
   formData.append('file', file)
   uploading.value = true
   try {
-    const { data } = await apiClient.post('/api/v1/files', formData, {
+    const { data } = await apiClient.post('/api/v1/admin/files', formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     })
     emit('update:modelValue', data.url)

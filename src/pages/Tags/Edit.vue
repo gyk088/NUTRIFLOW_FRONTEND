@@ -56,7 +56,7 @@ function filterTypeOption(input, option) {
 }
 
 async function loadTypeOptions() {
-  const { data } = await apiClient.get('/api/v1/tags')
+  const { data } = await apiClient.get('/api/v1/app/tags')
   const extraTypes = [...new Set(data.map((t) => t.type))].filter((type) => !knownTypeValues.has(type))
   typeOptions.value = [...knownTypeOptions, ...extraTypes.map((type) => ({ value: type, label: type }))]
 }
@@ -66,7 +66,7 @@ async function load() {
   try {
     await loadTypeOptions()
     if (isNew.value) return
-    const { data } = await apiClient.get(`/api/v1/tags/${route.params.id}`)
+    const { data } = await apiClient.get(`/api/v1/app/tags/${route.params.id}`)
     form.type = data.type
     form.name_ru = data.name_ru
     form.name_en = data.name_en
@@ -82,9 +82,9 @@ async function onSubmit() {
   const payload = { type: form.type, name_ru: form.name_ru, name_en: form.name_en }
   try {
     if (isNew.value) {
-      await apiClient.post('/api/v1/tags', payload)
+      await apiClient.post('/api/v1/admin/tags', payload)
     } else {
-      await apiClient.put(`/api/v1/tags/${route.params.id}`, payload)
+      await apiClient.put(`/api/v1/admin/tags/${route.params.id}`, payload)
     }
     notifyServerSuccess('Сохранено', 'Тег сохранён')
     router.push({ name: 'tags' })

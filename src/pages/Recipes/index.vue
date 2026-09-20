@@ -49,7 +49,7 @@ const columns = [
 async function load() {
   loading.value = true
   try {
-    const { data } = await apiClient.get('/api/v1/recipes', { params: { search: search.value || undefined } })
+    const { data } = await apiClient.get('/api/v1/app/recipes', { params: { search: search.value || undefined } })
     recipes.value = data
   } catch (e) {
     notifyServerError(e?.response?.data?.message || e?.response?.data?.error)
@@ -60,7 +60,7 @@ async function load() {
 
 async function remove(id) {
   try {
-    await apiClient.delete(`/api/v1/recipes/${id}`)
+    await apiClient.delete(`/api/v1/admin/recipes/${id}`)
     notifyServerSuccess('Удалено', 'Рецепт удалён')
     await load()
   } catch (e) {

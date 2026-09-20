@@ -94,7 +94,7 @@ const form = reactive({
 })
 
 async function loadAllergenOptions() {
-  const { data } = await apiClient.get('/api/v1/tags', { params: { type: TAG_TYPES.ALLERGEN } })
+  const { data } = await apiClient.get('/api/v1/app/tags', { params: { type: TAG_TYPES.ALLERGEN } })
   allergenOptions.value = data.map((t) => ({ value: t.id, label: `${t.name_ru} / ${t.name_en}` }))
 }
 
@@ -103,7 +103,7 @@ async function load() {
   try {
     await loadAllergenOptions()
     if (isNew.value) return
-    const { data } = await apiClient.get(`/api/v1/ingredients/${route.params.id}`)
+    const { data } = await apiClient.get(`/api/v1/app/ingredients/${route.params.id}`)
     Object.assign(form, data)
     form.tagIds = (data.tags || []).map((t) => t.id)
     gramsPerUnitRows.value = Object.entries(data.grams_per_unit || {}).map(([unit, grams]) => ({ unit, grams }))
@@ -127,9 +127,9 @@ async function onSubmit() {
   try {
     const payload = buildPayload()
     if (isNew.value) {
-      await apiClient.post('/api/v1/ingredients', payload)
+      await apiClient.post('/api/v1/admin/ingredients', payload)
     } else {
-      await apiClient.put(`/api/v1/ingredients/${route.params.id}`, payload)
+      await apiClient.put(`/api/v1/admin/ingredients/${route.params.id}`, payload)
     }
     notifyServerSuccess('Сохранено', 'Ингредиент сохранён')
     router.push({ name: 'ingredients' })
@@ -142,7 +142,7 @@ async function onSubmit() {
 
 async function remove() {
   try {
-    await apiClient.delete(`/api/v1/ingredients/${route.params.id}`)
+    await apiClient.delete(`/api/v1/admin/ingredients/${route.params.id}`)
     notifyServerSuccess('Удалено', 'Ингредиент удалён')
     router.push({ name: 'ingredients' })
   } catch (e) {

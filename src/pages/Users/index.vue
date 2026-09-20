@@ -40,7 +40,7 @@ const columns = [
 async function load() {
   loading.value = true
   try {
-    const { data } = await apiClient.get('/api/v1/users')
+    const { data } = await apiClient.get('/api/v1/admin/users')
     users.value = data
   } catch (e) {
     notifyServerError(e?.response?.data?.message || e?.response?.data?.error)
@@ -52,7 +52,7 @@ async function load() {
 async function changeRole(record, role) {
   const previousRole = record.role
   try {
-    await apiClient.put(`/api/v1/users/${record.id}/role`, { role })
+    await apiClient.put(`/api/v1/admin/users/${record.id}/role`, { role })
     notifyServerSuccess('Сохранено', `Роль пользователя ${record.email} изменена`)
   } catch (e) {
     record.role = previousRole

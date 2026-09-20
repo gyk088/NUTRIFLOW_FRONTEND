@@ -149,8 +149,8 @@ const form = reactive({
 
 async function loadOptions() {
   const [{ data: ingredients }, { data: tags }] = await Promise.all([
-    apiClient.get('/api/v1/ingredients'),
-    apiClient.get('/api/v1/tags')
+    apiClient.get('/api/v1/app/ingredients'),
+    apiClient.get('/api/v1/app/tags')
   ])
   ingredientOptions.value = ingredients.map((i) => ({ value: i.id, label: `${i.name_ru} / ${i.name_en}` }))
   tagOptions.value = tags.map((t) => ({ value: t.id, label: `${TEXT_TAG_TYPES[t.type] || t.type}: ${t.name_ru} / ${t.name_en}` }))
@@ -161,7 +161,7 @@ async function load() {
   try {
     await loadOptions()
     if (!isNew.value) {
-      const { data } = await apiClient.get(`/api/v1/recipes/${route.params.id}`)
+      const { data } = await apiClient.get(`/api/v1/app/recipes/${route.params.id}`)
       form.name_ru = data.name_ru
       form.name_en = data.name_en
       form.description_ru = data.description_ru
@@ -199,9 +199,9 @@ async function onSubmit() {
   }
   try {
     if (isNew.value) {
-      await apiClient.post('/api/v1/recipes', payload)
+      await apiClient.post('/api/v1/admin/recipes', payload)
     } else {
-      await apiClient.put(`/api/v1/recipes/${route.params.id}`, payload)
+      await apiClient.put(`/api/v1/admin/recipes/${route.params.id}`, payload)
     }
     notifyServerSuccess('Сохранено', 'Рецепт сохранён')
     router.push({ name: 'recipes' })
@@ -214,7 +214,7 @@ async function onSubmit() {
 
 async function remove() {
   try {
-    await apiClient.delete(`/api/v1/recipes/${route.params.id}`)
+    await apiClient.delete(`/api/v1/admin/recipes/${route.params.id}`)
     notifyServerSuccess('Удалено', 'Рецепт удалён')
     router.push({ name: 'recipes' })
   } catch (e) {

@@ -13,7 +13,12 @@
         <template v-if="column.key === 'image'">
           <a-avatar shape="square" :src="record.image_url" v-if="record.image_url" />
         </template>
-        <template v-else-if="column.key === 'name'"> {{ record.name_ru }} / {{ record.name_en }} </template>
+        <template v-else-if="column.key === 'name'">
+          {{ record.name }}
+          <template v-if="record.availableLanguages?.length > 1">
+            <a-tag v-for="code in record.availableLanguages" :key="code">{{ code }}</a-tag>
+          </template>
+        </template>
         <template v-else-if="column.key === 'actions'">
           <a-space>
             <a @click="router.push({ name: 'recipe-edit', params: { id: record.id } })">Изменить</a>
@@ -41,7 +46,7 @@ const search = ref('')
 
 const columns = [
   { title: '', key: 'image', width: 56 },
-  { title: 'Название (RU / EN)', key: 'name' },
+  { title: 'Название', key: 'name' },
   { title: 'Порций', dataIndex: 'servings', key: 'servings', width: 100 },
   { title: '', key: 'actions', width: 160 }
 ]

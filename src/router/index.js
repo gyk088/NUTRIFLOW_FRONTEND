@@ -51,6 +51,42 @@ const router = createRouter({
       meta: { title: 'Рецепт', layout: 'main' }
     },
     {
+      path: '/articles',
+      name: 'articles',
+      component: () => import('@/pages/Articles/index.vue'),
+      meta: { title: 'Статьи', layout: 'main' }
+    },
+    {
+      path: '/articles/new',
+      name: 'article-new',
+      component: () => import('@/pages/Articles/Edit.vue'),
+      meta: { title: 'Новая статья', layout: 'main' }
+    },
+    {
+      path: '/articles/:id',
+      name: 'article-edit',
+      component: () => import('@/pages/Articles/Edit.vue'),
+      meta: { title: 'Статья', layout: 'main' }
+    },
+    {
+      path: '/languages',
+      name: 'languages',
+      component: () => import('@/pages/Languages/index.vue'),
+      meta: { title: 'Языки', layout: 'main' }
+    },
+    {
+      path: '/languages/new',
+      name: 'language-new',
+      component: () => import('@/pages/Languages/Edit.vue'),
+      meta: { title: 'Новый язык', layout: 'main' }
+    },
+    {
+      path: '/languages/:code',
+      name: 'language-edit',
+      component: () => import('@/pages/Languages/Edit.vue'),
+      meta: { title: 'Язык', layout: 'main' }
+    },
+    {
       path: '/tags',
       name: 'tags',
       component: () => import('@/pages/Tags/index.vue'),

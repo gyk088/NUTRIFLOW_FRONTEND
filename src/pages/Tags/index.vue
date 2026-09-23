@@ -20,7 +20,12 @@
         <template v-if="column.key === 'type'">
           {{ TEXT_TAG_TYPES[record.type] || record.type }}
         </template>
-        <template v-else-if="column.key === 'name'"> {{ record.name_ru }} / {{ record.name_en }} </template>
+        <template v-else-if="column.key === 'name'">
+          {{ record.name }}
+          <template v-if="record.availableLanguages?.length > 1">
+            <a-tag v-for="code in record.availableLanguages" :key="code">{{ code }}</a-tag>
+          </template>
+        </template>
         <template v-else-if="column.key === 'actions'">
           <a-space>
             <a @click="router.push({ name: 'tag-edit', params: { id: record.id } })">Изменить</a>
@@ -54,7 +59,7 @@ const typeOptions = Object.values(TAG_TYPES).map((value) => ({
 
 const columns = [
   { title: 'Тип', key: 'type' },
-  { title: 'Название (RU / EN)', key: 'name' },
+  { title: 'Название', key: 'name' },
   { title: '', key: 'actions', width: 160 }
 ]
 

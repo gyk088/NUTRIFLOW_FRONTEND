@@ -19,6 +19,11 @@
             <a-tag v-for="code in record.availableLanguages" :key="code">{{ code }}</a-tag>
           </template>
         </template>
+        <template v-else-if="column.key === 'tags'">
+          <a-space wrap>
+            <a-tag v-for="tag in record.tags" :key="tag.id">{{ tag.name }}</a-tag>
+          </a-space>
+        </template>
         <template v-else-if="column.key === 'actions'">
           <a-space>
             <a @click="router.push({ name: 'ingredient-edit', params: { id: record.id } })">Изменить</a>
@@ -47,6 +52,8 @@ const search = ref('')
 const columns = [
   { title: '', key: 'image', width: 56 },
   { title: 'Название', key: 'name' },
+  { title: 'Ед. изм.', dataIndex: 'default_unit', key: 'default_unit', width: 100 },
+  { title: 'Теги', key: 'tags' },
   { title: 'Калории / 100г', dataIndex: 'calories', key: 'calories', width: 140 },
   { title: 'Белки', dataIndex: 'protein', key: 'protein', width: 100 },
   { title: 'Углеводы', dataIndex: 'carbs', key: 'carbs', width: 100 },

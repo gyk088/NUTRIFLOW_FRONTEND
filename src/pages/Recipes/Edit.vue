@@ -41,7 +41,7 @@
 
       <a-form-item label="Состав рецепта">
         <div v-for="(row, index) in ingredientRows" :key="index" class="composition-row">
-          <a-select v-model:value="row.ingredient_id" show-search placeholder="Ингредиент" :options="ingredientOptions" option-filter-prop="label" style="flex: 1" />
+          <a-select v-model:value="row.ingredient_id" show-search placeholder="Ингредиент" :options="ingredientOptions" option-filter-prop="label" style="flex: 1" @change="(_, option) => (row.unit = option.unit || 'g')" />
           <a-input-number v-model:value="row.quantity" placeholder="кол-во" :min="0" style="width: 120px" />
           <a-select v-model:value="row.unit" :options="unitOptions" style="width: 110px" />
           <a-button danger type="text" @click="ingredientRows.splice(index, 1)">
@@ -80,7 +80,7 @@
 
         <a-form-item label="Состав рецепта">
           <div v-for="(row, index) in ingredientRows" :key="index" class="composition-row">
-            <a-select v-model:value="row.ingredient_id" show-search placeholder="Ингредиент" :options="ingredientOptions" option-filter-prop="label" style="flex: 1" />
+            <a-select v-model:value="row.ingredient_id" show-search placeholder="Ингредиент" :options="ingredientOptions" option-filter-prop="label" style="flex: 1" @change="(_, option) => (row.unit = option.unit || 'g')" />
             <a-input-number v-model:value="row.quantity" placeholder="кол-во" :min="0" style="width: 120px" />
             <a-select v-model:value="row.unit" :options="unitOptions" style="width: 110px" />
             <a-button danger type="text" @click="ingredientRows.splice(index, 1)">
@@ -187,7 +187,7 @@ async function loadOptions() {
     apiClient.get('/api/v1/app/tags'),
     apiClient.get('/api/v1/app/languages')
   ])
-  ingredientOptions.value = ingredients.map((i) => ({ value: i.id, label: i.name }))
+  ingredientOptions.value = ingredients.map((i) => ({ value: i.id, label: i.name, unit: i.default_unit }))
   tagOptions.value = tags.map((t) => ({ value: t.id, label: t.name }))
   languages.value = langs
   if (isNew.value) form.languageCode = langs.find((l) => l.is_default)?.code || langs[0]?.code

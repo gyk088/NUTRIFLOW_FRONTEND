@@ -19,9 +19,16 @@
         </a-col>
       </a-row>
 
-      <a-form-item label="Аллергены">
-        <a-select v-model:value="form.tagIds" mode="multiple" placeholder="Выберите аллергены" :options="allergenOptions" option-filter-prop="label" />
+      <a-form-item label="Теги">
+        <a-select v-model:value="form.tagIds" mode="multiple" placeholder="Выберите теги" :options="tagOptions" option-filter-prop="label" />
       </a-form-item>
+
+      <a-form-item label="Единица измерения по умолчанию" extra="В чём считаем ингредиент (яйцо — штуки, молоко — мл). Для штук/ложек/чашек ниже укажите вес одной единицы в граммах.">
+
+        <a-select v-model:value="form.default_unit" :options="UNIT_OPTIONS" style="width: 260px" />
+
+      </a-form-item>
+
 
       <a-form-item label="Вес порционных единиц (граммы на штуку/ложку/чашку...)">
         <div v-for="(row, index) in gramsPerUnitRows" :key="index" class="gpu-row">
@@ -64,9 +71,16 @@
           </a-col>
         </a-row>
 
-        <a-form-item label="Аллергены">
-          <a-select v-model:value="form.tagIds" mode="multiple" placeholder="Выберите аллергены" :options="allergenOptions" option-filter-prop="label" />
+        <a-form-item label="Теги">
+          <a-select v-model:value="form.tagIds" mode="multiple" placeholder="Выберите теги" :options="tagOptions" option-filter-prop="label" />
         </a-form-item>
+
+        <a-form-item label="Единица измерения по умолчанию" extra="В чём считаем ингредиент (яйцо — штуки, молоко — мл). Для штук/ложек/чашек ниже укажите вес одной единицы в граммах.">
+
+          <a-select v-model:value="form.default_unit" :options="UNIT_OPTIONS" style="width: 260px" />
+
+        </a-form-item>
+
 
         <a-form-item label="Вес порционных единиц (граммы на штуку/ложку/чашку...)">
           <div v-for="(row, index) in gramsPerUnitRows" :key="index" class="gpu-row">
@@ -136,7 +150,7 @@ import { PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue'
 import apiClient from '@/services/api.js'
 import { notifyServerError, notifyServerSuccess } from '@/services/notify.js'
 import { NUTRIENT_GROUPS, emptyNutrientValues } from '@/services/nutrients.js'
-import { TAG_TYPES } from '@/services/const.js'
+import { TEXT_TAG_TYPES, UNIT_OPTIONS } from '@/services/const.js'
 import ImageUpload from '@/components/ImageUpload.vue'
 import TranslationTabs from '@/components/TranslationTabs.vue'
 
@@ -149,7 +163,7 @@ const saving = ref(false)
 const savingTranslation = ref(null)
 const openGroups = ref(['macros'])
 const gramsPerUnitRows = ref([])
-const allergenOptions = ref([])
+const tagOptions = ref([])
 const languages = ref([])
 const languageOptions = computed(() => languages.value.map((l) => ({ value: l.code, label: l.name })))
 const translations = ref([])
@@ -158,13 +172,14 @@ const form = reactive({
   languageCode: undefined,
   name: '',
   image_url: '',
+  default_unit: 'g',
   tagIds: [],
   ...emptyNutrientValues()
 })
 
-async function loadAllergenOptions() {
-  const { data } = await apiClient.get('/api/v1/app/tags', { params: { type: TAG_TYPES.ALLERGEN } })
-  allergenOptions.value = data.map((t) => ({ value: t.id, label: t.name }))
+async function loadTagOptions() {
+  const { data } = await apiClient.get('/api/v1/app/tags')
+  tagOptions.value = data.map((t) => ({ value: t.id, label: `${TEXT_TAG_TYPES[t.type] || t.type}: ${t.name}` }))
 }
 
 async function loadLanguages() {
@@ -176,7 +191,7 @@ async function loadLanguages() {
 async function load() {
   loading.value = true
   try {
-    await Promise.all([loadAllergenOptions(), loadLanguages()])
+    await Promise.all([loadTagOptions(), loadLanguages()])
     if (isNew.value) return
     const { data } = await apiClient.get(`/api/v1/admin/ingredients/${route.params.id}`)
     Object.assign(form, data)

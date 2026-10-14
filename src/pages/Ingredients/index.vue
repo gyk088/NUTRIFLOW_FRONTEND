@@ -2,10 +2,22 @@
   <div>
     <div class="toolbar">
       <a-input-search v-model:value="search" placeholder="Поиск по названию" style="width: 320px" @search="load" allow-clear />
-      <a-button type="primary" @click="router.push({ name: 'ingredient-new' })">
-        <template #icon><PlusOutlined /></template>
-        Создать ингредиент
-      </a-button>
+      <a-space>
+        <a-button :loading="exporting" @click="exportExcel">
+          <template #icon><DownloadOutlined /></template>
+          Экспорт в Excel
+        </a-button>
+        <a-upload accept=".xlsx" :show-upload-list="false" :before-upload="importExcel">
+          <a-button :loading="importing">
+            <template #icon><UploadOutlined /></template>
+            Импорт из Excel
+          </a-button>
+        </a-upload>
+        <a-button type="primary" @click="router.push({ name: 'ingredient-new' })">
+          <template #icon><PlusOutlined /></template>
+          Создать ингредиент
+        </a-button>
+      </a-space>
     </div>
 
     <a-table :data-source="ingredients" :loading="loading" :columns="columns" row-key="id" :pagination="{ pageSize: 20 }">
@@ -40,13 +52,15 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { PlusOutlined } from '@ant-design/icons-vue'
+import { PlusOutlined, DownloadOutlined, UploadOutlined } from '@ant-design/icons-vue'
 import apiClient from '@/services/api.js'
 import { notifyServerError, notifyServerSuccess } from '@/services/notify.js'
 
 const router = useRouter()
 const ingredients = ref([])
 const loading = ref(false)
+const exporting = ref(false)
+const importing = ref(false)
 const search = ref('')
 
 const columns = [
@@ -71,6 +85,45 @@ async function load() {
   } finally {
     loading.value = false
   }
+}
+
+async function exportExcel() {
+  exporting.value = true
+  try {
+    const { data } = await apiClient.get('/api/v1/admin/ingredients/export', { responseType: 'blob' })
+    const url = URL.createObjectURL(data)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = 'ingredients.xlsx'
+    link.click()
+    URL.revokeObjectURL(url)
+  } catch (e) {
+    notifyServerError(e?.response?.data?.message || e?.response?.data?.error || 'Не удалось выгрузить файл')
+  } finally {
+    exporting.value = false
+  }
+}
+
+// before-upload получает File напрямую (без обёртки antd) — возвращаем
+// false, чтобы a-upload не пытался отправить его сам, грузим вручную.
+async function importExcel(file) {
+  importing.value = true
+  try {
+    const formData = new FormData()
+    formData.append('file', file)
+    const { data } = await apiClient.post('/api/v1/admin/ingredients/import', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
+    const errorsText = data.errors?.length ? `, ошибок: ${data.errors.length} (см. консоль)` : ''
+    notifyServerSuccess('Импорт завершён', `Создано: ${data.created}, обновлено: ${data.updated}${errorsText}`)
+    if (data.errors?.length) console.warn('Ошибки импорта ингредиентов:', data.errors)
+    await load()
+  } catch (e) {
+    notifyServerError(e?.response?.data?.message || e?.response?.data?.error || 'Не удалось импортировать файл')
+  } finally {
+    importing.value = false
+  }
+  return false
 }
 
 async function remove(id) {

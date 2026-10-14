@@ -19,6 +19,10 @@
         </a-col>
       </a-row>
 
+      <a-form-item label="Описание">
+        <a-textarea v-model:value="form.description" :rows="3" />
+      </a-form-item>
+
       <a-form-item label="Теги">
         <a-select v-model:value="form.tagIds" mode="multiple" placeholder="Выберите теги" :options="tagOptions" option-filter-prop="label" />
       </a-form-item>
@@ -123,6 +127,9 @@
           <a-form-item label="Название">
             <a-input v-model:value="translation.name" placeholder="Куриная грудка" />
           </a-form-item>
+          <a-form-item label="Описание">
+            <a-textarea v-model:value="translation.description" :rows="3" />
+          </a-form-item>
           <a-space>
             <a-button type="primary" :loading="savingTranslation === translation.language_code" @click="saveTranslation(translation)">
               Сохранить перевод
@@ -171,6 +178,7 @@ const translations = ref([])
 const form = reactive({
   languageCode: undefined,
   name: '',
+  description: '',
   image_url: '',
   default_unit: 'g',
   tagIds: [],
@@ -240,13 +248,13 @@ async function onUpdate() {
 }
 
 function onAddLanguage(languageCode) {
-  translations.value.push({ language_code: languageCode, name: '' })
+  translations.value.push({ language_code: languageCode, name: '', description: '' })
 }
 
 async function saveTranslation(translation) {
   savingTranslation.value = translation.language_code
   try {
-    await apiClient.put(`/api/v1/admin/ingredients/${route.params.id}/translations/${translation.language_code}`, { name: translation.name })
+    await apiClient.put(`/api/v1/admin/ingredients/${route.params.id}/translations/${translation.language_code}`, { name: translation.name, description: translation.description })
     notifyServerSuccess('Сохранено', 'Перевод сохранён')
   } catch (e) {
     notifyServerError(e?.response?.data?.message || e?.response?.data?.error)

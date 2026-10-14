@@ -11,7 +11,8 @@ export const MACRO_FIELDS = [
   { field: 'cholesterol', label: 'Холестерин', unit: 'мг' },
   { field: 'sodium', label: 'Натрий', unit: 'мг' },
   { field: 'omega_3', label: 'Омега-3', unit: 'г' },
-  { field: 'omega_6', label: 'Омега-6', unit: 'г' }
+  { field: 'omega_6', label: 'Омега-6', unit: 'г' },
+  { field: 'omega_9', label: 'Омега-9', unit: 'г' }
 ]
 
 export const VITAMIN_FIELDS = [

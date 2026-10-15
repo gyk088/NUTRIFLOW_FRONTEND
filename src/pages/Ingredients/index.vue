@@ -23,7 +23,7 @@
     <a-table :data-source="ingredients" :loading="loading" :columns="columns" row-key="id" :pagination="{ pageSize: 20 }">
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'image'">
-          <a-avatar shape="square" :src="record.image_url" v-if="record.image_url" />
+          <a-avatar shape="square" :src="toFileUrl(record.image_url)" v-if="record.image_url" />
         </template>
         <template v-else-if="column.key === 'name'">
           {{ record.name }}
@@ -55,6 +55,7 @@ import { useRouter } from 'vue-router'
 import { PlusOutlined, DownloadOutlined, UploadOutlined } from '@ant-design/icons-vue'
 import apiClient from '@/services/api.js'
 import { notifyServerError, notifyServerSuccess } from '@/services/notify.js'
+import { toFileUrl } from '@/services/files.js'
 
 const router = useRouter()
 const ingredients = ref([])

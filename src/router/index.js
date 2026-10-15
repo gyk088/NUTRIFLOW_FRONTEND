@@ -105,6 +105,12 @@ const router = createRouter({
       meta: { title: 'Тег', layout: 'main' }
     },
     {
+      path: '/translations',
+      name: 'translations',
+      component: () => import('@/pages/Translations/index.vue'),
+      meta: { title: 'Тексты интерфейса', layout: 'main' }
+    },
+    {
       path: '/users',
       name: 'users',
       component: () => import('@/pages/Users/index.vue'),

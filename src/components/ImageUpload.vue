@@ -21,14 +21,16 @@ import { computed, ref } from 'vue'
 import { PlusOutlined, LoadingOutlined } from '@ant-design/icons-vue'
 import apiClient from '@/services/api.js'
 import { notifyServerError } from '@/services/notify.js'
+import { toFileUrl } from '@/services/files.js'
 
+// modelValue — это filename (не URL), так же как его хранит бэкенд.
 const props = defineProps({ modelValue: String })
 const emit = defineEmits(['update:modelValue'])
 
 const uploading = ref(false)
 
 const fileList = computed(() =>
-  props.modelValue ? [{ uid: '-1', name: 'image', status: 'done', url: props.modelValue }] : []
+  props.modelValue ? [{ uid: '-1', name: 'image', status: 'done', url: toFileUrl(props.modelValue) }] : []
 )
 
 function beforeUpload(file) {
@@ -45,7 +47,7 @@ async function handleUpload({ file, onSuccess, onError }) {
     const { data } = await apiClient.post('/api/v1/admin/files', formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     })
-    emit('update:modelValue', data.url)
+    emit('update:modelValue', data.filename)
     onSuccess(data)
   } catch (e) {
     notifyServerError(e?.response?.data?.error || 'Не удалось загрузить файл')

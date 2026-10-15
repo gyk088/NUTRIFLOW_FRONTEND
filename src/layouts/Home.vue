@@ -23,6 +23,10 @@
           <GlobalOutlined />
           <span>Языки</span>
         </a-menu-item>
+        <a-menu-item key="translations">
+          <TranslationOutlined />
+          <span>Тексты интерфейса</span>
+        </a-menu-item>
         <a-menu-item key="users" v-if="auth.isSuperAdmin">
           <TeamOutlined />
           <span>Пользователи</span>
@@ -53,7 +57,7 @@
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Modal } from 'ant-design-vue'
-import { AppleOutlined, BookOutlined, FileTextOutlined, TagsOutlined, GlobalOutlined, TeamOutlined, LogoutOutlined } from '@ant-design/icons-vue'
+import { AppleOutlined, BookOutlined, FileTextOutlined, TagsOutlined, GlobalOutlined, TranslationOutlined, TeamOutlined, LogoutOutlined } from '@ant-design/icons-vue'
 import { useAuth } from '@/stores/auth'
 
 const collapsed = ref(false)
